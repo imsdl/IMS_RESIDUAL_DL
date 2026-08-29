@@ -37,7 +37,6 @@
   input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
   input[type="number"] { -moz-appearance: textfield; }
 
-/* ── HEADER ── */
 #header {
   background: #111;
   border-bottom: 1px solid var(--border);
@@ -65,10 +64,7 @@
 }
 #logout-btn:hover { background: #2a2a2a; color: #ef4444; }
 
-/* ── AUTH SCREEN ── */
-#auth-screen {
-  max-width: 380px; margin: 60px auto; padding: 0 16px;
-}
+#auth-screen { max-width: 380px; margin: 60px auto; padding: 0 16px; }
 .auth-card {
   background: var(--surface); border: 1px solid var(--border);
   border-radius: 16px; padding: 28px 24px;
@@ -90,9 +86,7 @@
   color: var(--text); font-size: 14px; outline: none;
 }
 .auth-field input:focus { border-color: var(--gold); }
-.auth-error {
-  color: #ef4444; font-size: 12px; margin-bottom: 12px; min-height: 18px;
-}
+.auth-error { color: #ef4444; font-size: 12px; margin-bottom: 12px; min-height: 18px; }
 .auth-btn {
   width: 100%; padding: 13px;
   background: linear-gradient(135deg, #e5303a, #b01f28);
@@ -105,11 +99,8 @@
   background: transparent; border: 1px solid #333; color: #888;
 }
 .auth-btn.secondary:hover { border-color: #555; color: #ccc; }
-#loading {
-  display: none; text-align: center; padding: 80px 20px; color: #555; font-size: 13px;
-}
+#loading { display: none; text-align: center; padding: 80px 20px; color: #555; font-size: 13px; }
 
-/* ── CONTENT ── */
 #app { display: none; }
 #content { max-width: 680px; margin: 0 auto; padding: 20px 16px; }
 
@@ -176,20 +167,54 @@
 .icon-btn:hover { background: #2a2a2a; }
 .icon-btn.red { color: #ef4444; }
 
+.volume-section {
+  background: #161616; border: 1px solid #252525; border-radius: 10px;
+  padding: 10px 12px; margin-bottom: 12px;
+}
 .volume-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.volume-label { font-size: 11px; color: #666; letter-spacing: 0.5px; white-space: nowrap; }
+.volume-label { font-size: 10px; color: #666; letter-spacing: 0.5px; white-space: nowrap; }
 .input-volume {
-  flex: 1; min-width: 140px;
+  flex: 1; min-width: 120px;
   background: #1e1e1e; border: 1px solid #2e2e2e; border-radius: 8px;
-  color: var(--text); padding: 8px 12px; font-size: 14px; font-weight: 600; outline: none;
+  color: var(--text); padding: 7px 10px; font-size: 13px; font-weight: 600; outline: none;
 }
 .input-volume:focus { border-color: var(--gold); }
 .residual-badge {
   background: var(--green-dim); border: 1px solid var(--green);
-  border-radius: 8px; padding: 6px 12px;
-  color: var(--green); font-size: 14px; font-weight: 800; white-space: nowrap;
+  border-radius: 8px; padding: 5px 10px;
+  color: var(--green); font-size: 13px; font-weight: 800; white-space: nowrap;
 }
-.hint { margin-top: 8px; font-size: 10px; color: #444; }
+.volume-hint { margin-top: 6px; font-size: 10px; color: #444; }
+
+.eq-row {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  padding: 7px 0; border-bottom: 1px solid #1e1e1e;
+}
+.eq-row:last-of-type { border-bottom: none; }
+.eq-select {
+  background: #1e1e1e; border: 1px solid #2e2e2e; border-radius: 8px;
+  color: var(--text); padding: 5px 8px; font-size: 12px; outline: none;
+  cursor: pointer; min-width: 130px; flex: 1;
+}
+.qty-wrap { display: flex; align-items: center; gap: 4px; }
+.qty-num { color: #fff; min-width: 20px; text-align: center; font-size: 14px; }
+.price-badge {
+  padding: 4px 10px; border-radius: 20px; cursor: pointer;
+  font-size: 11px; font-weight: 700; white-space: nowrap;
+}
+.price-badge:hover { opacity: .8; }
+.price-badge.green { background: var(--green-dim); border: 1px solid var(--green); color: var(--green); }
+.price-badge.red { background: rgba(239,68,68,0.12); border: 1px solid #ef4444; color: #ef4444; }
+.eq-comm { color: var(--gold); font-size: 13px; font-weight: 700; margin-left: auto; white-space: nowrap; }
+.add-row-btn {
+  margin-top: 10px; padding: 7px 14px; width: 100%;
+  background: transparent; border: 1px dashed #2e2e2e; border-radius: 8px;
+  color: #555; cursor: pointer; font-size: 12px;
+}
+.add-row-btn:hover { border-color: #444; color: #888; }
+.section-label {
+  font-size: 9px; color: #555; letter-spacing: 1.5px; margin-bottom: 8px; margin-top: 4px;
+}
 
 #summary {
   margin-top: 24px; background: var(--surface); border: 1px solid var(--border);
@@ -209,6 +234,33 @@
 .summary-total span:first-child { color: #fff; }
 .summary-total span:last-child { color: var(--gold); }
 
+#overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+  display: none; align-items: center; justify-content: center; z-index: 500;
+}
+#overlay.active { display: flex; }
+#popup {
+  background: #1a1a1a; border-radius: 14px; padding: 22px 24px;
+  min-width: 260px; max-width: 90vw; border: 1px solid #333;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+}
+#popup .pop-title { color: #888; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; }
+.pop-tier {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 9px 12px; border-radius: 8px; margin-bottom: 4px; cursor: pointer;
+  border: 1px solid transparent;
+}
+.pop-tier:hover { background: #252525; }
+.pop-tier.is-green { border-color: var(--green); }
+.pop-tier .tier-price { font-size: 13px; }
+.pop-tier.is-green .tier-price { color: var(--green); font-weight: 700; }
+.pop-tier .tier-comm { color: var(--gold); font-size: 12px; font-weight: 600; }
+#popup-cancel {
+  margin-top: 10px; width: 100%; padding: 8px;
+  background: #222; border: 1px solid #444; border-radius: 8px;
+  color: #888; cursor: pointer; font-size: 13px; font-family: inherit;
+}
+
 .save-status {
   position: fixed; bottom: 16px; right: 16px;
   background: #1a1a1a; border: 1px solid #333; border-radius: 8px;
@@ -224,7 +276,6 @@
 
 <div id="loading">Cargando…</div>
 
-<!-- AUTH -->
 <div id="auth-screen" style="display:none">
   <div class="auth-card">
     <div class="auth-title">IMS SALES</div>
@@ -243,7 +294,6 @@
   </div>
 </div>
 
-<!-- APP -->
 <div id="app">
   <div id="header">
     <div>
@@ -289,6 +339,14 @@
   </div>
 </div>
 
+<div id="overlay" onclick="closePopup()">
+  <div id="popup" onclick="event.stopPropagation()">
+    <div class="pop-title" id="popup-title"></div>
+    <div id="popup-tiers"></div>
+    <button id="popup-cancel" onclick="closePopup()">Cancelar</button>
+  </div>
+</div>
+
 <div class="save-status" id="save-status">Guardado</div>
 
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
@@ -296,10 +354,6 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 
 <script>
-// ═══════════════════════════════════════════════════════════════════════════
-//  1. PEGA AQUÍ TU CONFIGURACIÓN DE FIREBASE
-//     Firebase Console → Project settings → Your apps → Web app → SDK setup
-// ═══════════════════════════════════════════════════════════════════════════
 const firebaseConfig = {
   apiKey: "AIzaSyB3gM4gpqFSlk68BUL3Hm5C7FqhdZ1QGiQ",
   authDomain: "ims-residual-dl.firebaseapp.com",
@@ -313,11 +367,40 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-const RATE = 0.0025 * 0.32;
+const EQUIPMENT = [
+  { id:"flex",    name:"Clover Flex",    green:{ monthly:55, commission:450 },
+    tiers:[{m:30,c:100},{m:35,c:150},{m:40,c:250},{m:45,c:300},{m:50,c:350},{m:55,c:450}] },
+  { id:"mini",    name:"Clover Mini",    green:{ monthly:85, commission:700 },
+    tiers:[{m:60,c:200},{m:65,c:300},{m:70,c:400},{m:75,c:500},{m:80,c:600},{m:85,c:700}] },
+  { id:"compact", name:"Clover Compact", green:{ monthly:40, commission:450 },
+    tiers:[{m:15,c:100},{m:20,c:150},{m:25,c:250},{m:30,c:300},{m:35,c:350},{m:40,c:450}] },
+  { id:"kitchen", name:"Clover Kitchen", green:{ monthly:45, commission:300 },
+    tiers:[{m:30,c:100},{m:35,c:150},{m:40,c:250},{m:45,c:300}] },
+  { id:"kiosk",   name:"Clover Kiosk",   green:{ monthly:290, commission:3000 },
+    tiers:[{m:165,c:1000},{m:180,c:1250},{m:200,c:1500},{m:220,c:1800},{m:240,c:2100},{m:255,c:2400},{m:275,c:2700},{m:290,c:3000}] },
+  { id:"duo",     name:"Clover Duo",     green:{ monthly:120, commission:800 },
+    tiers:[{m:85,c:150},{m:90,c:250},{m:95,c:350},{m:100,c:400},{m:105,c:500},{m:110,c:600},{m:115,c:700},{m:120,c:800}] },
+  { id:"printer", name:"Printer",        green:{ monthly:40, commission:300 },
+    tiers:[{m:25,c:100},{m:30,c:150},{m:35,c:250},{m:40,c:300}] },
+];
 
+function getEq(id) { return EQUIPMENT.find(e => e.id === id); }
+function getComm(eqId, monthly) {
+  const eq = getEq(eqId);
+  if (!eq) return 0;
+  const t = eq.tiers.find(t => t.m === monthly);
+  return t ? t.c : 0;
+}
+
+const RATE = 0.0025 * 0.32;
 function calcResidual(volume) {
   const v = parseFloat(volume) || 0;
   return Math.round(v * RATE * 100) / 100;
+}
+function calcSaleTotal(sale) {
+  const residual = calcResidual(sale.volume);
+  const eqTotal = (sale.rows || []).reduce((s, r) => s + getComm(r.eqId, r.monthly) * (r.qty || 1), 0);
+  return residual + eqTotal;
 }
 function fmt(n) {
   return '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
@@ -328,9 +411,11 @@ function today() {
 
 let sales = [];
 let nextSaleId = 1;
+let nextRowId = 10000;
 let currentUser = null;
 let saveTimer = null;
 let isRegisterMode = false;
+let _popupCallback = null;
 
 function toggleMode() {
   isRegisterMode = !isRegisterMode;
@@ -344,22 +429,11 @@ async function handleAuth() {
   const pass = document.getElementById('auth-pass').value;
   const errEl = document.getElementById('auth-error');
   errEl.textContent = '';
-
-  if (!email || !pass) {
-    errEl.textContent = 'Completa email y contraseña';
-    return;
-  }
-  if (pass.length < 6) {
-    errEl.textContent = 'La contraseña debe tener al menos 6 caracteres';
-    return;
-  }
-
+  if (!email || !pass) { errEl.textContent = 'Completa email y contraseña'; return; }
+  if (pass.length < 6) { errEl.textContent = 'La contraseña debe tener al menos 6 caracteres'; return; }
   try {
-    if (isRegisterMode) {
-      await auth.createUserWithEmailAndPassword(email, pass);
-    } else {
-      await auth.signInWithEmailAndPassword(email, pass);
-    }
+    if (isRegisterMode) await auth.createUserWithEmailAndPassword(email, pass);
+    else await auth.signInWithEmailAndPassword(email, pass);
   } catch (e) {
     const map = {
       'auth/email-already-in-use': 'Ese email ya está registrado',
@@ -374,26 +448,28 @@ async function handleAuth() {
   }
 }
 
-function logout() {
-  auth.signOut();
-}
-
-function userDoc() {
-  return db.collection('users').doc(currentUser.uid);
-}
+function logout() { auth.signOut(); }
+function userDoc() { return db.collection('users').doc(currentUser.uid); }
 
 async function loadSales() {
   try {
     const snap = await userDoc().get();
     if (snap.exists && Array.isArray(snap.data().sales)) {
-      sales = snap.data().sales;
+      sales = snap.data().sales.map(s => ({
+        ...s,
+        rows: Array.isArray(s.rows) ? s.rows : [],
+        volume: s.volume || '',
+        collapsed: !!s.collapsed
+      }));
       nextSaleId = sales.length > 0 ? Math.max(...sales.map(s => s.id)) + 1 : 1;
+      const allRows = sales.flatMap(s => s.rows || []);
+      nextRowId = allRows.length > 0 ? Math.max(...allRows.map(r => r.id || 0)) + 1 : 10000;
     } else {
       sales = [];
       nextSaleId = 1;
     }
   } catch (e) {
-    console.error('Error cargando datos:', e);
+    console.error(e);
     sales = [];
   }
   render();
@@ -422,6 +498,29 @@ async function saveToCloud() {
   setTimeout(() => status.classList.remove('show'), 2000);
 }
 
+function openPricePicker(eqId, currentMonthly, cb) {
+  const eq = getEq(eqId);
+  _popupCallback = cb;
+  document.getElementById('popup-title').textContent = eq.name + ' — Opciones de precio';
+  const container = document.getElementById('popup-tiers');
+  container.innerHTML = '';
+  eq.tiers.forEach(t => {
+    const isGreen = t.m === eq.green.monthly;
+    const isCurrent = t.m === currentMonthly;
+    const div = document.createElement('div');
+    div.className = 'pop-tier' + (isGreen ? ' is-green' : '');
+    if (isCurrent) div.style.background = '#2a2a2a';
+    div.innerHTML = '<span class="tier-price">$' + t.m + '/mo' + (isGreen ? ' ★' : '') + '</span><span class="tier-comm">' + fmt(t.c) + ' comisión</span>';
+    div.onclick = () => { cb(t.m); closePopup(); };
+    container.appendChild(div);
+  });
+  document.getElementById('overlay').classList.add('active');
+}
+function closePopup() {
+  document.getElementById('overlay').classList.remove('active');
+  _popupCallback = null;
+}
+
 function render() {
   const list = document.getElementById('sales-list');
   const empty = document.getElementById('empty');
@@ -436,9 +535,10 @@ function render() {
   const summaryRows = [];
 
   sales.forEach(sale => {
-    const residual = calcResidual(sale.volume);
-    ytd += residual;
-    summaryRows.push({ name: sale.business || '(sin nombre)', total: residual });
+    if (!sale.rows) sale.rows = [];
+    const saleTotal = calcSaleTotal(sale);
+    ytd += saleTotal;
+    summaryRows.push({ name: sale.business || '(sin nombre)', total: saleTotal });
 
     const card = document.createElement('div');
     card.className = 'sale-card';
@@ -464,7 +564,13 @@ function render() {
 
     const totalBadge = document.createElement('div');
     totalBadge.className = 'card-total';
-    totalBadge.textContent = fmt(residual);
+    totalBadge.textContent = fmt(saleTotal);
+    totalBadge.title = 'Residual volumen + comisiones equipos';
+
+    const collapseBtn = document.createElement('button');
+    collapseBtn.className = 'icon-btn';
+    collapseBtn.textContent = sale.collapsed ? '▸' : '▾';
+    collapseBtn.onclick = () => { sale.collapsed = !sale.collapsed; scheduleSave(); render(); };
 
     const delBtn = document.createElement('button');
     delBtn.className = 'icon-btn red';
@@ -477,48 +583,126 @@ function render() {
       }
     };
 
-    hdr.append(bizInput, dateInput, totalBadge, delBtn);
+    hdr.append(bizInput, dateInput, totalBadge, collapseBtn, delBtn);
     card.appendChild(hdr);
 
-    const body = document.createElement('div');
-    body.className = 'card-body';
+    if (!sale.collapsed) {
+      const body = document.createElement('div');
+      body.className = 'card-body';
 
-    const row = document.createElement('div');
-    row.className = 'volume-row';
+      const volSec = document.createElement('div');
+      volSec.className = 'volume-section';
+      const volRow = document.createElement('div');
+      volRow.className = 'volume-row';
+      const volLabel = document.createElement('span');
+      volLabel.className = 'volume-label';
+      volLabel.textContent = 'VENTA MENSUAL';
+      const volInput = document.createElement('input');
+      volInput.type = 'number';
+      volInput.className = 'input-volume';
+      volInput.placeholder = 'Ej: 20000';
+      volInput.min = '0';
+      volInput.step = '100';
+      volInput.value = sale.volume || '';
+      const residualBadge = document.createElement('div');
+      residualBadge.className = 'residual-badge';
+      residualBadge.textContent = fmt(calcResidual(sale.volume));
+      volInput.oninput = e => {
+        sale.volume = e.target.value;
+        residualBadge.textContent = fmt(calcResidual(sale.volume));
+        totalBadge.textContent = fmt(calcSaleTotal(sale));
+        updateTotalsOnly();
+        scheduleSave();
+      };
+      volRow.append(volLabel, volInput, residualBadge);
+      volSec.appendChild(volRow);
+      const volHint = document.createElement('div');
+      volHint.className = 'volume-hint';
+      volHint.textContent = 'Residual = volumen × 0.25% × 32%';
+      volSec.appendChild(volHint);
+      body.appendChild(volSec);
 
-    const label = document.createElement('span');
-    label.className = 'volume-label';
-    label.textContent = 'VENTA MENSUAL';
+      const eqLabel = document.createElement('div');
+      eqLabel.className = 'section-label';
+      eqLabel.textContent = 'EQUIPOS';
+      body.appendChild(eqLabel);
 
-    const volInput = document.createElement('input');
-    volInput.type = 'number';
-    volInput.className = 'input-volume';
-    volInput.placeholder = 'Ej: 20000';
-    volInput.min = '0';
-    volInput.step = '100';
-    volInput.value = sale.volume || '';
-    volInput.oninput = e => {
-      sale.volume = e.target.value;
-      const residual = calcResidual(sale.volume);
-      totalBadge.textContent = fmt(residual);
-      residualBadge.textContent = fmt(residual);
-      updateTotalsOnly();
-      scheduleSave();
-    };
+      sale.rows.forEach((row, idx) => {
+        const eq = getEq(row.eqId) || EQUIPMENT[0];
+        const comm = getComm(row.eqId, row.monthly) * (row.qty || 1);
+        const isGreen = row.monthly === eq.green.monthly;
+        const rowEl = document.createElement('div');
+        rowEl.className = 'eq-row';
 
-    const residualBadge = document.createElement('div');
-    residualBadge.className = 'residual-badge';
-    residualBadge.textContent = fmt(residual);
+        const sel = document.createElement('select');
+        sel.className = 'eq-select';
+        EQUIPMENT.forEach(e => {
+          const opt = document.createElement('option');
+          opt.value = e.id;
+          opt.textContent = e.name;
+          if (e.id === row.eqId) opt.selected = true;
+          sel.appendChild(opt);
+        });
+        sel.onchange = e => {
+          row.eqId = e.target.value;
+          row.monthly = getEq(row.eqId).green.monthly;
+          scheduleSave();
+          render();
+        };
 
-    row.append(label, volInput, residualBadge);
-    body.appendChild(row);
+        const qtyWrap = document.createElement('div');
+        qtyWrap.className = 'qty-wrap';
+        const minusBtn = document.createElement('button');
+        minusBtn.className = 'icon-btn';
+        minusBtn.textContent = '−';
+        minusBtn.onclick = () => { if ((row.qty || 1) > 1) { row.qty--; scheduleSave(); render(); } };
+        const qtyNum = document.createElement('span');
+        qtyNum.className = 'qty-num';
+        qtyNum.textContent = row.qty || 1;
+        const plusBtn = document.createElement('button');
+        plusBtn.className = 'icon-btn';
+        plusBtn.textContent = '+';
+        plusBtn.onclick = () => { row.qty = (row.qty || 1) + 1; scheduleSave(); render(); };
+        qtyWrap.append(minusBtn, qtyNum, plusBtn);
 
-    const hint = document.createElement('div');
-    hint.className = 'hint';
-    hint.textContent = 'Residual = volumen × 0.25% × 32%';
-    body.appendChild(hint);
+        const badge = document.createElement('div');
+        badge.className = 'price-badge ' + (isGreen ? 'green' : 'red');
+        badge.textContent = '$' + row.monthly + '/mo' + (isGreen ? ' ★' : ' ⚠');
+        badge.onclick = () => openPricePicker(row.eqId, row.monthly, m => {
+          row.monthly = m;
+          scheduleSave();
+          render();
+        });
 
-    card.appendChild(body);
+        const commEl = document.createElement('span');
+        commEl.className = 'eq-comm';
+        commEl.textContent = fmt(comm);
+
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'icon-btn red';
+        removeBtn.textContent = '✕';
+        removeBtn.onclick = () => {
+          sale.rows.splice(idx, 1);
+          scheduleSave();
+          render();
+        };
+
+        rowEl.append(sel, qtyWrap, badge, commEl, removeBtn);
+        body.appendChild(rowEl);
+      });
+
+      const addRow = document.createElement('button');
+      addRow.className = 'add-row-btn';
+      addRow.textContent = '+ Agregar equipo';
+      addRow.onclick = () => {
+        const def = EQUIPMENT[0];
+        sale.rows.push({ id: nextRowId++, eqId: def.id, monthly: def.green.monthly, qty: 1 });
+        scheduleSave();
+        render();
+      };
+      body.appendChild(addRow);
+      card.appendChild(body);
+    }
     list.appendChild(card);
   });
 
@@ -533,7 +717,7 @@ function renderSummaryFull(rows, ytd) {
   rows.forEach(r => {
     const div = document.createElement('div');
     div.className = 'summary-row';
-    div.innerHTML = `<span>${r.name}</span><span>${fmt(r.total)}</span>`;
+    div.innerHTML = '<span>' + r.name + '</span><span>' + fmt(r.total) + '</span>';
     container.appendChild(div);
   });
   document.getElementById('summary-ytd').textContent = fmt(ytd);
@@ -542,7 +726,7 @@ function renderSummaryFull(rows, ytd) {
 function updateTotalsOnly() {
   let ytd = 0;
   const summaryRows = sales.map(s => {
-    const total = calcResidual(s.volume);
+    const total = calcSaleTotal(s);
     ytd += total;
     return { name: s.business || '(sin nombre)', total };
   });
@@ -552,11 +736,14 @@ function updateTotalsOnly() {
 }
 
 function addSale() {
+  const def = EQUIPMENT[0];
   sales.push({
     id: nextSaleId++,
     business: '',
     date: today(),
-    volume: ''
+    volume: '',
+    collapsed: false,
+    rows: [{ id: nextRowId++, eqId: def.id, monthly: def.green.monthly, qty: 1 }]
   });
   scheduleSave();
   render();
@@ -564,26 +751,27 @@ function addSale() {
 
 function exportCSV() {
   if (sales.length === 0) return;
-  const headers = ['Negocio', 'Fecha', 'Venta Mensual', 'Residual'];
+  const headers = ['Negocio', 'Fecha', 'Venta Mensual', 'Residual Volumen', 'Comisión Equipos', 'Total'];
   const rows = sales.map(s => {
     const residual = calcResidual(s.volume);
+    const eqTotal = (s.rows || []).reduce((sum, r) => sum + getComm(r.eqId, r.monthly) * (r.qty || 1), 0);
+    const total = residual + eqTotal;
     const volume = parseFloat(s.volume) || 0;
     const name = '"' + (s.business || '(sin nombre)').replace(/"/g, '""') + '"';
-    return [name, s.date || '', volume, residual.toFixed(2)].join(',');
+    return [name, s.date || '', volume, residual.toFixed(2), eqTotal.toFixed(2), total.toFixed(2)].join(',');
   });
   const csv = [headers.join(','), ...rows].join('\n');
   const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `ims-residuales-${today()}.csv`;
+  a.download = 'ims-residuales-' + today() + '.csv';
   a.click();
   URL.revokeObjectURL(url);
 }
 
 auth.onAuthStateChanged(async (user) => {
   document.getElementById('loading').style.display = 'none';
-
   if (user) {
     currentUser = user;
     document.getElementById('auth-screen').style.display = 'none';
