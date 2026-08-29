@@ -231,20 +231,22 @@
 }
 #summary .summary-title { font-size: 9px; color: #555; letter-spacing: 2px; margin-bottom: 12px; }
 .summary-head {
-  display: grid; grid-template-columns: 1fr auto auto;
+  display: grid; grid-template-columns: 1fr auto auto auto;
   gap: 8px; padding-bottom: 6px; margin-bottom: 4px;
   border-bottom: 1px solid #1a1a1a; font-size: 9px; color: #555; letter-spacing: 1px;
 }
 .summary-row {
-  display: grid; grid-template-columns: 1fr auto auto;
+  display: grid; grid-template-columns: 1fr auto auto auto;
   gap: 8px; padding: 6px 0; border-bottom: 1px solid #1a1a1a; font-size: 13px;
   align-items: center;
 }
 .summary-row .name { color: #888; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .summary-row .comm { color: var(--gold); font-weight: 700; text-align: right; white-space: nowrap; }
 .summary-row .resid { color: var(--blue); font-weight: 700; text-align: right; white-space: nowrap; }
+.summary-row .inicio { color: #888; font-size: 11px; text-align: right; white-space: nowrap; }
+.summary-total .inicio { color: transparent; }
 .summary-total {
-  display: grid; grid-template-columns: 1fr auto auto;
+  display: grid; grid-template-columns: 1fr auto auto auto;
   gap: 8px; padding-top: 12px; margin-top: 4px; font-size: 14px; font-weight: 800;
   align-items: center;
 }
@@ -357,12 +359,14 @@
         <span>NEGOCIO</span>
         <span>COMISIÓN</span>
         <span>RESIDUAL</span>
+        <span>INICIO</span>
       </div>
       <div id="summary-rows"></div>
       <div class="summary-total">
         <span class="name">TOTAL YTD</span>
         <span class="comm" id="summary-comm">$0</span>
         <span class="resid" id="summary-resid">$0/mes</span>
+        <span class="inicio" id="summary-inicio"></span>
       </div>
     </div>
   </div>
@@ -435,6 +439,17 @@ function fmt(n) {
 function today() {
   return new Date().toISOString().split('T')[0];
 }
+
+function residualStartLabel(dateStr) {
+  if (!dateStr) return '—';
+  const d = new Date(dateStr + 'T12:00:00');
+  if (isNaN(d.getTime())) return '—';
+  // +3 months (firma mes N → cobro mes N+3)
+  d.setMonth(d.getMonth() + 3);
+  const months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  return months[d.getMonth()] + ' ' + d.getFullYear();
+}
+
 
 let sales = [];
 let nextSaleId = 1;
@@ -568,7 +583,8 @@ function render() {
     summaryRows.push({
       name: sale.business || '(sin nombre)',
       comm: eqComm,
-      resid: residual
+      resid: residual,
+      inicio: residualStartLabel(sale.date)
     });
 
     const card = document.createElement('div');
@@ -590,8 +606,9 @@ function render() {
     const dateInput = document.createElement('input');
     dateInput.type = 'date';
     dateInput.className = 'input-date';
+    dateInput.title = 'Fecha de firma';
     dateInput.value = sale.date || '';
-    dateInput.oninput = e => { sale.date = e.target.value; scheduleSave(); };
+    dateInput.oninput = e => { sale.date = e.target.value; updateTotalsOnly(); scheduleSave(); };
 
     const badges = document.createElement('div');
     badges.className = 'card-badges';
@@ -759,7 +776,8 @@ function renderSummaryFull(rows, ytdComm, ytdResid) {
     div.className = 'summary-row';
     div.innerHTML = '<span class="name">' + r.name + '</span>' +
       '<span class="comm">' + fmt(r.comm) + '</span>' +
-      '<span class="resid">' + fmt(r.resid) + '/mes</span>';
+      '<span class="resid">' + fmt(r.resid) + '/mes</span>' +
+      '<span class="inicio">' + (r.inicio || '—') + '</span>';
     container.appendChild(div);
   });
   document.getElementById('summary-comm').textContent = fmt(ytdComm);
@@ -773,7 +791,7 @@ function updateTotalsOnly() {
     const resid = calcResidual(s.volume);
     ytdComm += comm;
     ytdResid += resid;
-    return { name: s.business || '(sin nombre)', comm, resid };
+    return { name: s.business || '(sin nombre)', comm, resid, inicio: residualStartLabel(s.date) };
   });
   renderSummaryFull(summaryRows, ytdComm, ytdResid);
   document.getElementById('hdr-count').textContent = sales.length;
@@ -797,14 +815,14 @@ function addSale() {
 
 function exportCSV() {
   if (sales.length === 0) return;
-  const headers = ['Negocio', 'Fecha', 'Venta Mensual', 'Comisión Equipos', 'Residual/Mes', 'Total'];
+  const headers = ['Negocio', 'Fecha Firma', 'Venta Mensual', 'Comisión Equipos', 'Residual/Mes', 'Inicio Residual', 'Total'];
   const rows = sales.map(s => {
     const residual = calcResidual(s.volume);
     const eqTotal = calcEqComm(s);
     const total = residual + eqTotal;
     const volume = parseFloat(s.volume) || 0;
     const name = '"' + (s.business || '(sin nombre)').replace(/"/g, '""') + '"';
-    return [name, s.date || '', volume, eqTotal.toFixed(2), residual.toFixed(2), total.toFixed(2)].join(',');
+    return [name, s.date || '', volume, eqTotal.toFixed(2), residual.toFixed(2), residualStartLabel(s.date), total.toFixed(2)].join(',');
   });
   const csv = [headers.join(',')].concat(rows).join('\n');
   const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
