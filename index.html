@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>IMS Sales Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --red: #e5303a;
+    --gold: #f59e0b;
+    --gold-dim: rgba(245,158,11,0.15);
+    --green: #22c55e;
+    --green-dim: rgba(34,197,94,0.12);
+    --bg: #0d0d0d;
+    --surface: #141414;
+    --surface2: #1c1c1c;
+    --border: #2a2a2a;
+    --text: #e5e5e5;
+  }
+  html { background: var(--bg); }
+  body {
+    background: var(--bg);
+    font-family: 'DM Mono', 'Courier New', monospace;
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: 80px;
+  }
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: #111; }
+  ::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+  input, select, button { font-family: inherit; }
+  input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.5); }
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+  input[type="number"] { -moz-appearance: textfield; }
+
+/* ── HEADER ── */
+#header {
+  background: #111;
+  border-bottom: 1px solid var(--border);
+  padding: 14px 20px;
+  position: sticky; top: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 10px;
+}
+#header .logo { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; color: var(--red); letter-spacing: -0.5px; }
+#header .sub { font-size: 9px; color: #555; letter-spacing: 2px; margin-top: 2px; }
+#header .stats { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+#header .stat { text-align: center; }
+#header .stat-label { font-size: 9px; color: #555; letter-spacing: 1px; }
+#header .stat-val { font-size: 18px; font-weight: 800; color: #fff; line-height: 1.1; }
+#header .stat-val.gold { color: var(--gold); }
+.divider { width: 1px; height: 32px; background: #333; }
+.user-info { display: flex; align-items: center; gap: 8px; }
+.user-email {
+  font-size: 11px; color: #666; max-width: 130px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+#logout-btn {
+  background: #1e1e1e; border: 1px solid #333; border-radius: 6px;
+  color: #888; padding: 5px 10px; font-size: 11px; cursor: pointer;
+}
+#logout-btn:hover { background: #2a2a2a; color: #ef4444; }
+
+/* ── AUTH SCREEN ── */
+#auth-screen {
+  max-width: 380px; margin: 60px auto; padding: 0 16px;
+}
+.auth-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 16px; padding: 28px 24px;
+}
+.auth-title {
+  font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800;
+  color: var(--red); text-align: center; margin-bottom: 6px;
+}
+.auth-sub {
+  text-align: center; font-size: 11px; color: #555; letter-spacing: 1px; margin-bottom: 24px;
+}
+.auth-field { margin-bottom: 14px; }
+.auth-field label {
+  display: block; font-size: 10px; color: #666; letter-spacing: 1px; margin-bottom: 6px;
+}
+.auth-field input {
+  width: 100%; padding: 11px 12px;
+  background: #1e1e1e; border: 1px solid #2e2e2e; border-radius: 8px;
+  color: var(--text); font-size: 14px; outline: none;
+}
+.auth-field input:focus { border-color: var(--gold); }
+.auth-error {
+  color: #ef4444; font-size: 12px; margin-bottom: 12px; min-height: 18px;
+}
+.auth-btn {
+  width: 100%; padding: 13px;
+  background: linear-gradient(135deg, #e5303a, #b01f28);
+  border: none; border-radius: 10px;
+  color: #fff; font-family: 'Syne', sans-serif;
+  font-size: 14px; font-weight: 700; cursor: pointer; margin-bottom: 12px;
+}
+.auth-btn:hover { opacity: .9; }
+.auth-btn.secondary {
+  background: transparent; border: 1px solid #333; color: #888;
+}
+.auth-btn.secondary:hover { border-color: #555; color: #ccc; }
+#loading {
+  display: none; text-align: center; padding: 80px 20px; color: #555; font-size: 13px;
+}
+
+/* ── CONTENT ── */
+#app { display: none; }
+#content { max-width: 680px; margin: 0 auto; padding: 20px 16px; }
+
+.btn-row { display: flex; gap: 10px; margin-bottom: 20px; }
+#add-btn {
+  flex: 1; padding: 13px;
+  background: linear-gradient(135deg, #e5303a, #b01f28);
+  border: none; border-radius: 12px;
+  color: #fff; font-family: 'Syne', sans-serif;
+  font-size: 14px; font-weight: 700; letter-spacing: 0.5px;
+  cursor: pointer; box-shadow: 0 4px 20px rgba(229,48,58,0.3);
+}
+#add-btn:hover { opacity: .88; }
+#export-btn {
+  padding: 13px 18px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 12px; color: var(--gold);
+  font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700;
+  cursor: pointer; white-space: nowrap;
+}
+#export-btn:hover { background: #252525; border-color: var(--gold); }
+#export-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+#empty {
+  text-align: center; color: #333; padding: 60px 20px;
+  border: 2px dashed #1e1e1e; border-radius: 16px;
+}
+#empty .icon { font-size: 36px; margin-bottom: 12px; }
+#empty p { font-size: 13px; }
+
+.sale-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; margin-bottom: 12px; overflow: hidden;
+  animation: slideIn .2s ease;
+}
+@keyframes slideIn { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+
+.card-header {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 14px; background: var(--surface2);
+  border-bottom: 1px solid var(--border); flex-wrap: wrap;
+}
+.card-body { padding: 12px 14px; }
+
+.input-biz {
+  flex: 1; min-width: 140px;
+  background: #1e1e1e; border: 1px solid #2e2e2e; border-radius: 8px;
+  color: var(--text); padding: 6px 10px; font-size: 13px; font-weight: 700; outline: none;
+}
+.input-date {
+  background: #1e1e1e; border: 1px solid #2e2e2e; border-radius: 8px;
+  color: var(--text); padding: 6px 10px; font-size: 11px; outline: none; width: 130px;
+}
+.card-total {
+  background: var(--gold-dim); border: 1px solid var(--gold);
+  border-radius: 8px; padding: 4px 10px;
+  color: var(--gold); font-size: 13px; font-weight: 800; white-space: nowrap;
+}
+.icon-btn {
+  background: #1e1e1e; border: 1px solid #333; border-radius: 6px;
+  color: #888; width: 28px; height: 28px; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; font-size: 14px;
+}
+.icon-btn:hover { background: #2a2a2a; }
+.icon-btn.red { color: #ef4444; }
+
+.volume-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.volume-label { font-size: 11px; color: #666; letter-spacing: 0.5px; white-space: nowrap; }
+.input-volume {
+  flex: 1; min-width: 140px;
+  background: #1e1e1e; border: 1px solid #2e2e2e; border-radius: 8px;
+  color: var(--text); padding: 8px 12px; font-size: 14px; font-weight: 600; outline: none;
+}
+.input-volume:focus { border-color: var(--gold); }
+.residual-badge {
+  background: var(--green-dim); border: 1px solid var(--green);
+  border-radius: 8px; padding: 6px 12px;
+  color: var(--green); font-size: 14px; font-weight: 800; white-space: nowrap;
+}
+.hint { margin-top: 8px; font-size: 10px; color: #444; }
+
+#summary {
+  margin-top: 24px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 16px 18px;
+}
+#summary .summary-title { font-size: 9px; color: #555; letter-spacing: 2px; margin-bottom: 12px; }
+.summary-row {
+  display: flex; justify-content: space-between;
+  padding: 6px 0; border-bottom: 1px solid #1a1a1a; font-size: 13px;
+}
+.summary-row span:first-child { color: #888; }
+.summary-row span:last-child { color: var(--gold); font-weight: 700; }
+.summary-total {
+  display: flex; justify-content: space-between;
+  padding-top: 12px; margin-top: 4px; font-size: 15px; font-weight: 800;
+}
+.summary-total span:first-child { color: #fff; }
+.summary-total span:last-child { color: var(--gold); }
+
+.save-status {
+  position: fixed; bottom: 16px; right: 16px;
+  background: #1a1a1a; border: 1px solid #333; border-radius: 8px;
+  padding: 6px 12px; font-size: 11px; color: #666;
+  opacity: 0; transition: opacity .3s; pointer-events: none; z-index: 300;
+}
+.save-status.show { opacity: 1; }
+.save-status.ok { color: var(--green); border-color: #1a3a1a; }
+.save-status.err { color: #ef4444; border-color: #3a1a1a; }
+</style>
+</head>
+<body>
+
+<div id="loading">Cargando…</div>
+
+<!-- AUTH -->
+<div id="auth-screen" style="display:none">
+  <div class="auth-card">
+    <div class="auth-title">IMS SALES</div>
+    <div class="auth-sub">RESIDUALES 2026</div>
+    <div class="auth-field">
+      <label>EMAIL</label>
+      <input type="email" id="auth-email" placeholder="tu@email.com" autocomplete="email" />
+    </div>
+    <div class="auth-field">
+      <label>CONTRASEÑA</label>
+      <input type="password" id="auth-pass" placeholder="••••••••" autocomplete="current-password" />
+    </div>
+    <div class="auth-error" id="auth-error"></div>
+    <button class="auth-btn" id="auth-submit" onclick="handleAuth()">Entrar</button>
+    <button class="auth-btn secondary" id="auth-switch" onclick="toggleMode()">Crear cuenta</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div id="header">
+    <div>
+      <div class="logo">IMS SALES</div>
+      <div class="sub">RESIDUALES 2026</div>
+    </div>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-label">NEGOCIOS</div>
+        <div class="stat-val" id="hdr-count">0</div>
+      </div>
+      <div class="divider"></div>
+      <div class="stat">
+        <div class="stat-label">TOTAL YTD</div>
+        <div class="stat-val gold" id="hdr-total">$0</div>
+      </div>
+      <div class="divider"></div>
+      <div class="user-info">
+        <span class="user-email" id="user-email"></span>
+        <button id="logout-btn" onclick="logout()">Salir</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content">
+    <div class="btn-row">
+      <button id="add-btn" onclick="addSale()">+ NUEVO NEGOCIO</button>
+      <button id="export-btn" onclick="exportCSV()" disabled>⬇ CSV</button>
+    </div>
+    <div id="sales-list"></div>
+    <div id="empty">
+      <div class="icon">📋</div>
+      <p>Toca "+ NUEVO NEGOCIO" para empezar</p>
+    </div>
+    <div id="summary" style="display:none">
+      <div class="summary-title">RESUMEN ACUMULADO</div>
+      <div id="summary-rows"></div>
+      <div class="summary-total">
+        <span>TOTAL YTD</span>
+        <span id="summary-ytd">$0</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="save-status" id="save-status">Guardado</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════
+//  1. PEGA AQUÍ TU CONFIGURACIÓN DE FIREBASE
+//     Firebase Console → Project settings → Your apps → Web app → SDK setup
+// ═══════════════════════════════════════════════════════════════════════════
+const firebaseConfig = {
+  apiKey: "AIzaSyB3gM4gpqFSlk68BUL3Hm5C7FqhdZ1QGiQ",
+  authDomain: "ims-residual-dl.firebaseapp.com",
+  projectId: "ims-residual-dl",
+  storageBucket: "ims-residual-dl.firebasestorage.app",
+  messagingSenderId: "447171856411",
+  appId: "1:447171856411:web:1d9c5c1ace5e420128d0be"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+const RATE = 0.0025 * 0.32;
+
+function calcResidual(volume) {
+  const v = parseFloat(volume) || 0;
+  return Math.round(v * RATE * 100) / 100;
+}
+function fmt(n) {
+  return '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+}
+function today() {
+  return new Date().toISOString().split('T')[0];
+}
+
+let sales = [];
+let nextSaleId = 1;
+let currentUser = null;
+let saveTimer = null;
+let isRegisterMode = false;
+
+function toggleMode() {
+  isRegisterMode = !isRegisterMode;
+  document.getElementById('auth-submit').textContent = isRegisterMode ? 'Crear cuenta' : 'Entrar';
+  document.getElementById('auth-switch').textContent = isRegisterMode ? 'Ya tengo cuenta' : 'Crear cuenta';
+  document.getElementById('auth-error').textContent = '';
+}
+
+async function handleAuth() {
+  const email = document.getElementById('auth-email').value.trim();
+  const pass = document.getElementById('auth-pass').value;
+  const errEl = document.getElementById('auth-error');
+  errEl.textContent = '';
+
+  if (!email || !pass) {
+    errEl.textContent = 'Completa email y contraseña';
+    return;
+  }
+  if (pass.length < 6) {
+    errEl.textContent = 'La contraseña debe tener al menos 6 caracteres';
+    return;
+  }
+
+  try {
+    if (isRegisterMode) {
+      await auth.createUserWithEmailAndPassword(email, pass);
+    } else {
+      await auth.signInWithEmailAndPassword(email, pass);
+    }
+  } catch (e) {
+    const map = {
+      'auth/email-already-in-use': 'Ese email ya está registrado',
+      'auth/invalid-email': 'Email inválido',
+      'auth/user-not-found': 'No existe una cuenta con ese email',
+      'auth/wrong-password': 'Contraseña incorrecta',
+      'auth/weak-password': 'Contraseña demasiado débil',
+      'auth/invalid-credential': 'Email o contraseña incorrectos',
+      'auth/too-many-requests': 'Demasiados intentos. Espera un momento'
+    };
+    errEl.textContent = map[e.code] || e.message;
+  }
+}
+
+function logout() {
+  auth.signOut();
+}
+
+function userDoc() {
+  return db.collection('users').doc(currentUser.uid);
+}
+
+async function loadSales() {
+  try {
+    const snap = await userDoc().get();
+    if (snap.exists && Array.isArray(snap.data().sales)) {
+      sales = snap.data().sales;
+      nextSaleId = sales.length > 0 ? Math.max(...sales.map(s => s.id)) + 1 : 1;
+    } else {
+      sales = [];
+      nextSaleId = 1;
+    }
+  } catch (e) {
+    console.error('Error cargando datos:', e);
+    sales = [];
+  }
+  render();
+}
+
+function scheduleSave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveToCloud, 600);
+}
+
+async function saveToCloud() {
+  if (!currentUser) return;
+  const status = document.getElementById('save-status');
+  try {
+    await userDoc().set({
+      sales,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+    status.textContent = 'Guardado ✓';
+    status.className = 'save-status show ok';
+  } catch (e) {
+    console.error(e);
+    status.textContent = 'Error al guardar';
+    status.className = 'save-status show err';
+  }
+  setTimeout(() => status.classList.remove('show'), 2000);
+}
+
+function render() {
+  const list = document.getElementById('sales-list');
+  const empty = document.getElementById('empty');
+  const summary = document.getElementById('summary');
+
+  list.innerHTML = '';
+  empty.style.display = sales.length === 0 ? 'block' : 'none';
+  summary.style.display = sales.length === 0 ? 'none' : 'block';
+  document.getElementById('export-btn').disabled = sales.length === 0;
+
+  let ytd = 0;
+  const summaryRows = [];
+
+  sales.forEach(sale => {
+    const residual = calcResidual(sale.volume);
+    ytd += residual;
+    summaryRows.push({ name: sale.business || '(sin nombre)', total: residual });
+
+    const card = document.createElement('div');
+    card.className = 'sale-card';
+
+    const hdr = document.createElement('div');
+    hdr.className = 'card-header';
+
+    const bizInput = document.createElement('input');
+    bizInput.className = 'input-biz';
+    bizInput.placeholder = 'Nombre del negocio';
+    bizInput.value = sale.business || '';
+    bizInput.oninput = e => {
+      sale.business = e.target.value;
+      updateTotalsOnly();
+      scheduleSave();
+    };
+
+    const dateInput = document.createElement('input');
+    dateInput.type = 'date';
+    dateInput.className = 'input-date';
+    dateInput.value = sale.date || '';
+    dateInput.oninput = e => { sale.date = e.target.value; scheduleSave(); };
+
+    const totalBadge = document.createElement('div');
+    totalBadge.className = 'card-total';
+    totalBadge.textContent = fmt(residual);
+
+    const delBtn = document.createElement('button');
+    delBtn.className = 'icon-btn red';
+    delBtn.textContent = '🗑';
+    delBtn.onclick = () => {
+      if (confirm('¿Borrar este negocio?')) {
+        sales = sales.filter(s => s.id !== sale.id);
+        scheduleSave();
+        render();
+      }
+    };
+
+    hdr.append(bizInput, dateInput, totalBadge, delBtn);
+    card.appendChild(hdr);
+
+    const body = document.createElement('div');
+    body.className = 'card-body';
+
+    const row = document.createElement('div');
+    row.className = 'volume-row';
+
+    const label = document.createElement('span');
+    label.className = 'volume-label';
+    label.textContent = 'VENTA MENSUAL';
+
+    const volInput = document.createElement('input');
+    volInput.type = 'number';
+    volInput.className = 'input-volume';
+    volInput.placeholder = 'Ej: 20000';
+    volInput.min = '0';
+    volInput.step = '100';
+    volInput.value = sale.volume || '';
+    volInput.oninput = e => {
+      sale.volume = e.target.value;
+      const residual = calcResidual(sale.volume);
+      totalBadge.textContent = fmt(residual);
+      residualBadge.textContent = fmt(residual);
+      updateTotalsOnly();
+      scheduleSave();
+    };
+
+    const residualBadge = document.createElement('div');
+    residualBadge.className = 'residual-badge';
+    residualBadge.textContent = fmt(residual);
+
+    row.append(label, volInput, residualBadge);
+    body.appendChild(row);
+
+    const hint = document.createElement('div');
+    hint.className = 'hint';
+    hint.textContent = 'Residual = volumen × 0.25% × 32%';
+    body.appendChild(hint);
+
+    card.appendChild(body);
+    list.appendChild(card);
+  });
+
+  renderSummaryFull(summaryRows, ytd);
+  document.getElementById('hdr-count').textContent = sales.length;
+  document.getElementById('hdr-total').textContent = fmt(ytd);
+}
+
+function renderSummaryFull(rows, ytd) {
+  const container = document.getElementById('summary-rows');
+  container.innerHTML = '';
+  rows.forEach(r => {
+    const div = document.createElement('div');
+    div.className = 'summary-row';
+    div.innerHTML = `<span>${r.name}</span><span>${fmt(r.total)}</span>`;
+    container.appendChild(div);
+  });
+  document.getElementById('summary-ytd').textContent = fmt(ytd);
+}
+
+function updateTotalsOnly() {
+  let ytd = 0;
+  const summaryRows = sales.map(s => {
+    const total = calcResidual(s.volume);
+    ytd += total;
+    return { name: s.business || '(sin nombre)', total };
+  });
+  renderSummaryFull(summaryRows, ytd);
+  document.getElementById('hdr-count').textContent = sales.length;
+  document.getElementById('hdr-total').textContent = fmt(ytd);
+}
+
+function addSale() {
+  sales.push({
+    id: nextSaleId++,
+    business: '',
+    date: today(),
+    volume: ''
+  });
+  scheduleSave();
+  render();
+}
+
+function exportCSV() {
+  if (sales.length === 0) return;
+  const headers = ['Negocio', 'Fecha', 'Venta Mensual', 'Residual'];
+  const rows = sales.map(s => {
+    const residual = calcResidual(s.volume);
+    const volume = parseFloat(s.volume) || 0;
+    const name = '"' + (s.business || '(sin nombre)').replace(/"/g, '""') + '"';
+    return [name, s.date || '', volume, residual.toFixed(2)].join(',');
+  });
+  const csv = [headers.join(','), ...rows].join('\n');
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `ims-residuales-${today()}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+auth.onAuthStateChanged(async (user) => {
+  document.getElementById('loading').style.display = 'none';
+
+  if (user) {
+    currentUser = user;
+    document.getElementById('auth-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    document.getElementById('user-email').textContent = user.email;
+    await loadSales();
+  } else {
+    currentUser = null;
+    sales = [];
+    document.getElementById('app').style.display = 'none';
+    document.getElementById('auth-screen').style.display = 'block';
+  }
+});
+</script>
+</body>
+</html>
