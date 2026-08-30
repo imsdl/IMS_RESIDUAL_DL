@@ -609,6 +609,7 @@ function render() {
 
     const card = document.createElement('div');
     card.className = 'sale-card';
+    card.id = 'sale-' + sale.id;
 
     const hdr = document.createElement('div');
     hdr.className = 'card-header';
@@ -825,8 +826,9 @@ function updateTotalsOnly() {
 
 function addSale() {
   const def = EQUIPMENT[0];
+  const newId = nextSaleId++;
   sales.push({
-    id: nextSaleId++,
+    id: newId,
     business: '',
     date: today(),
     volume: '',
@@ -835,6 +837,11 @@ function addSale() {
   });
   scheduleSave();
   render();
+  // Bajar automáticamente hasta el nuevo negocio
+  requestAnimationFrame(() => {
+    const el = document.getElementById('sale-' + newId);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
 }
 
 function exportCSV() {
